@@ -1,4 +1,4 @@
-import { GiStockpiles } from "react-icons/gi";
+
 import fashion1 from "../images/fashion/fashion1.jpeg";
 import fashion2 from "../images/fashion/fashion2.jpeg";
 import fashion3 from "../images/fashion/fashion3.jpeg";
