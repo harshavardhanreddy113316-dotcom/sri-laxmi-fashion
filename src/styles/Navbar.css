@@ -1,0 +1,69 @@
+.navbar {
+  background: #111;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  border-bottom: 2px solid gold;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+}
+
+.logo-section h2 {
+  color: gold;
+  font-size: 26px;
+}
+
+.search-box {
+  width: 280px;
+  padding: 10px 15px;
+  border: 2px solid gold;
+  border-radius: 25px;
+  outline: none;
+  background: #222;
+  color: white;
+}
+
+.search-box::placeholder {
+  color: #ccc;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.nav-links a:hover {
+  color: gold;
+}
+
+.cart-btn {
+  background: #d4af37;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.cart-btn:hover {
+  background: #b8941f;
+}

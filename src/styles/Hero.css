@@ -1,0 +1,9 @@
+.hero {
+    width: 100%;
+    height: hidden
+}
+.hero-banner {
+    width: 100%;
+    display: block;
+    border-radius: 10px;
+}
