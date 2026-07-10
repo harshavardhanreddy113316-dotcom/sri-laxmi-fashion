@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { db } from "../firebase";
 import {
   collection,
+  addDoc,
   getDocs,
   onSnapshot,
   doc,
