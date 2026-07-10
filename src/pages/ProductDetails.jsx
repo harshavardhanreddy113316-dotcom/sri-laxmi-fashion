@@ -1,86 +1,150 @@
-import { useParams } from "react-router-dom";
-import products from "../data/products";
-import fashion from "../data/fashion";
+import { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
+import { CartContext } from "../context/CartContext";
+import "../styles/ProductDetails.css";
 
 function ProductDetails() {
   const { id } = useParams();
 
-  const allProducts = [...products, ...fashion];
+  const navigate = useNavigate();
 
-  const product = allProducts.find(
-    (item) =>
-      item.name === decodeURIComponent(id)
-  );
+  const { addToCart } = useContext(CartContext);
+
+  const [product, setProduct] = useState(null);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProduct = async () => {
+      try {
+        const snapshot = await getDoc(
+          doc(db, "products", id)
+        );
+
+        if (snapshot.exists()) {
+          setProduct({
+            id: snapshot.id,
+            ...snapshot.data(),
+          });
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+
+        setLoading(false);
+      }
+    };
+
+    loadProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <h1 className="loading">
+        Loading...
+      </h1>
+    );
+  }
 
   if (!product) {
     return (
-      <h1
-        style={{
-          color: "white",
-          textAlign: "center",
-          marginTop: "50px",
-        }}
-      >
+      <h1 className="loading">
         Product Not Found
       </h1>
     );
   }
 
   return (
-    <div
-      style={{
-        background: "#f5f5f5",
-        minHeight: "100vh",
-        padding: "40px",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: "1200px",
-          margin: "auto",
-          display: "flex",
-          gap: "50px",
-          background: "white",
-          padding: "30px",
-          borderRadius: "20px",
-          boxShadow: "0 0 15px rgba(0,0,0,0.1)",
-        }}
-      >
-        {/* Left Side */}
-        <div style={{ flex: 1 }}>
+    <div className="product-page">
+
+      <div className="product-container">
+
+        <div className="product-image">
+
           <img
             src={product.image}
             alt={product.name}
-            style={{
-              width: "100%",
-              borderRadius: "15px",
-            }}
           />
+
         </div>
 
-        {/* Right Side */}
-        <div style={{ flex: 1 }}>
+        <div className="product-info">
+
           <h1>{product.name}</h1>
 
-          <h2
-            style={{
-              color: "#2563eb",
-            }}
-          >
-            ₹{product.price}
-          </h2>
+          <div className="price-box">
 
-          <p
-            style={{
-              marginTop: "20px",
-              color: "#555",
-              lineHeight: "1.8",
-            }}
-          >
-            Premium quality product from Sri Laxmi Fashion.
+            <span className="price">
+              ₹{product.price}
+            </span>
+
+            {product.originalPrice && (
+              <span className="old-price">
+                ₹{product.originalPrice}
+              </span>
+            )}
+
+            {product.discount > 0 && (
+              <span className="discount">
+                {product.discount}% OFF
+              </span>
+            )}
+
+          </div>
+
+          <p className="stock">
+
+            {product.stock > 0
+              ? "✔ In Stock"
+              : "❌ Out of Stock"}
+
           </p>
+
+          <h3>Description</h3>
+
+          <p className="description">
+            {product.description}
+          </p>
+
+          <div className="buttons">
+
+            <button
+  className="cart-btn"
+  disabled={product.stock <= 0}
+  onClick={() => {
+    if (product.stock <= 0) return;
+    addToCart(product);
+  }}
+>
+  {product.stock <= 0
+    ? "Out of Stock"
+    : "Add To Cart"}
+</button>
+
+            <button
+  className="buy-btn"
+  disabled={product.stock <= 0}
+  onClick={() => {
+    if (product.stock <= 0) return;
+
+    addToCart(product);
+    navigate("/checkout");
+  }}
+>
+  {product.stock <= 0
+    ? "Out of Stock"
+    : "Buy Now"}
+</button>
+
+          </div>
+
         </div>
+
       </div>
+
     </div>
   );
 }

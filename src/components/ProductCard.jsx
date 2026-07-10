@@ -16,9 +16,9 @@ function ProductCard({ product }) {
   return (
     <div
       className="product-card"
-      onClick={() =>
-        navigate(`/product/${encodeURIComponent(product.name)}`)
-      }
+      onClick={() => {
+        navigate(`/product/${product.id}`);
+      }}
       style={{ cursor: "pointer" }}
     >
       <img src={product.image} alt={product.name} />
@@ -28,13 +28,20 @@ function ProductCard({ product }) {
       <p>₹{product.price}</p>
 
       <button
-        onClick={(e) => {
-          e.stopPropagation();
-          addToCart(product);
-        }}
-      >
-        Add to Cart
-      </button>
+  onClick={(e) => {
+    e.stopPropagation();
+    addToCart(product);
+  }}
+  disabled={product.stock <= 0}
+  style={{
+    opacity: product.stock <= 0 ? 0.5 : 1,
+    cursor: product.stock <= 0 ? "not-allowed" : "pointer",
+  }}
+>
+  {product.stock <= 0
+    ? "Out of Stock"
+    : "Add to Cart"}
+</button>
     </div>
   );
 }

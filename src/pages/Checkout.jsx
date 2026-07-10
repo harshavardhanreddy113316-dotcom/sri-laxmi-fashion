@@ -8,6 +8,7 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  getDoc,
 } from "firebase/firestore";
 import { CartContext } from "../context/CartContext";
 
@@ -123,6 +124,24 @@ const applyCoupon = () => {
   collection(db, "orders"),
   newOrder
 );
+
+// Update stock
+for (const item of cartItems) {
+  const productRef = doc(db, "products", item.id);
+
+  const productSnap = await getDoc(productRef);
+
+  if (productSnap.exists()) {
+    const currentStock = productSnap.data().stock || 0;
+
+    await updateDoc(productRef, {
+      stock: Math.max(
+        currentStock - item.quantity,
+        0
+      ),
+    });
+  }
+}
 
     localStorage.setItem(
   "lastOrderId",
