@@ -4,6 +4,8 @@ import {
   useEffect,
 } from "react";
 
+import { toast } from "react-toastify";
+
 export const CartContext = createContext();
 
 function CartProvider({ children }) {
@@ -23,36 +25,40 @@ function CartProvider({ children }) {
     );
   }, [cartItems]);
 
-  const addToCart = (product) => {
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find(
-        (item) =>
-          item.name === product.name
-      );
+ const addToCart = (product) => {
+  const existingItem = cartItems.find(
+    (item) => item.name === product.name
+  );
 
-      if (existingItem) {
-        return prevItems.map((item) =>
-          item.name === product.name
-            ? {
-                ...item,
-                quantity:
-                  item.quantity + 1,
-              }
-            : item
-        );
-      }
+  if (existingItem) {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.name === product.name
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+            }
+          : item
+      )
+    );
 
-      return [
-        ...prevItems,
-        {
-          ...product,
-          quantity: 1,
-        },
-      ];
-    });
-  };
+    toast.success("🛍 Cart Updated!");
+  } else {
+    setCartItems((prevItems) => [
+      ...prevItems,
+      {
+        ...product,
+        quantity: 1,
+      },
+    ]);
+
+    toast.success("🛒 Added to Cart!");
+  }
+};
 
   const removeFromCart = (id) => {
+    toast.info("🗑 Item Removed");
+
     setCartItems((prevItems) =>
       prevItems.filter(
         (item, index) =>
@@ -62,6 +68,7 @@ function CartProvider({ children }) {
   };
 
   const clearCart = () => {
+    toast.info("🛒 Cart Cleared");
     setCartItems([]);
   };
 

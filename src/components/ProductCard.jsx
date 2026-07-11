@@ -21,11 +21,54 @@ function ProductCard({ product }) {
       }}
       style={{ cursor: "pointer" }}
     >
-      <img src={product.image} alt={product.name} />
+      <div className="product-image">
+
+  {product.discount > 0 && (
+    <span className="sale-badge">
+      💥 {product.discount}% OFF
+    </span>
+  )}
+
+  {product.stock <= 0 && (
+    <span className="stock-badge">
+      Out of Stock
+    </span>
+  )}
+
+  <img
+    src={product.image}
+    alt={product.name}
+  />
+
+</div>
 
       <h3>{product.name}</h3>
 
-      <p>₹{product.price}</p>
+     <div className="price-section">
+
+  <span className="new-price">
+    ₹{product.price}
+  </span>
+
+  {product.originalPrice > product.price && (
+    <span className="old-price">
+      ₹{product.originalPrice}
+    </span>
+  )}
+
+</div>
+
+<p
+  className={
+    product.stock > 0
+      ? "stock-green"
+      : "stock-red"
+  }
+>
+  {product.stock > 0
+    ? "🟢 In Stock"
+    : "🔴 Out of Stock"}
+</p>
 
       <button
   onClick={(e) => {
