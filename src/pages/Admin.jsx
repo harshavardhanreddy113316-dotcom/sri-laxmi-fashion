@@ -190,19 +190,22 @@ const updateStatus = (orderId, newStatus) => {
     JSON.stringify(updatedOrders)
   );
 }; 
-
-const deleteOrder = (orderId) => {
-  const updatedOrders = orders.filter(
-    (order) =>
-      order.orderId !== orderId
+const deleteOrder = async (id) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this order?"
   );
 
-  setOrders(updatedOrders);
+  if (!confirmDelete) return;
 
-  localStorage.setItem(
-    "orders",
-    JSON.stringify(updatedOrders)
-  );
+  try {
+    await deleteDoc(doc(db, "orders", id));
+
+    alert("✅ Order deleted successfully");
+  } catch (error) {
+    console.error(error);
+
+    alert("❌ Failed to delete order");
+  }
 };
 
 const saveStoreSettings = () => {
@@ -672,10 +675,8 @@ useEffect(() => {
 
             <button
               onClick={() =>
-                deleteOrder(
-                  order.orderId
-                )
-              }
+  deleteOrder(order.id)
+}
               style={{
                 marginTop: "20px",
                 background: "#ef4444",
@@ -686,7 +687,7 @@ useEffect(() => {
                 cursor: "pointer",
               }}
             >
-              🗑 Delete
+              🗑 Deletes
             </button>
           </div>
         ))}
