@@ -172,24 +172,18 @@ useEffect(() => {
   return () => unsubscribe();
 }, []);
 
-const updateStatus = (orderId, newStatus) => {
-  const updatedOrders = orders.map((order) => {
-    if (order.orderId === orderId) {
-      return {
-        ...order,
-        status: newStatus,
-      };
-    }
-    return order;
-  });
+const updateStatus = async (id, newStatus) => {
+  try {
+    await updateDoc(doc(db, "orders", id), {
+      status: newStatus,
+    });
 
-  setOrders(updatedOrders);
-
-  localStorage.setItem(
-    "orders",
-    JSON.stringify(updatedOrders)
-  );
-}; 
+    alert("✅ Status updated");
+  } catch (error) {
+    console.error(error);
+    alert("❌ Failed to update status");
+  }
+};
 const deleteOrder = async (id) => {
   const confirmDelete = window.confirm(
     "Are you sure you want to delete this order?"
@@ -675,8 +669,8 @@ useEffect(() => {
 
             <button
               onClick={() =>
-  deleteOrder(order.id)
-}
+             deleteOrder(order.id)
+             }
               style={{
                 marginTop: "20px",
                 background: "#ef4444",
