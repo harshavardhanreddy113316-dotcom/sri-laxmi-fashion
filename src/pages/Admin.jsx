@@ -180,9 +180,9 @@ const updateStatus = async (id, newStatus) => {
 
     alert("✅ Status updated");
   } catch (error) {
-    console.error(error);
-    alert("❌ Failed to update status");
-  }
+  console.error(error);
+  alert(error.message);
+}
 };
 const deleteOrder = async (id) => {
   const confirmDelete = window.confirm(
