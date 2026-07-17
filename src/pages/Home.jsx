@@ -121,15 +121,28 @@ function Home({
               />
             ))
           ) : (
-            <h2
-              style={{
-                color: "white",
-                textAlign: "center",
-                width: "100%",
-              }}
-            >
-              No Products Found
-            </h2>
+            <div
+  style={{
+    width: "100%",
+    textAlign: "center",
+    padding: "60px 20px",
+    color: "white",
+  }}
+>
+  <h1 style={{ fontSize: "60px" }}>😔</h1>
+
+  <h2>No Products Found</h2>
+
+  <p
+    style={{
+      color: "#bdbdbd",
+      marginTop: "10px",
+      fontSize: "18px",
+    }}
+  >
+    Try searching with another keyword.
+  </p>
+</div>
           )}
         </div>
       </section>

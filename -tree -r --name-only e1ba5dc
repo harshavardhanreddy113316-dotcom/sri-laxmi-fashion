@@ -1,0 +1,16 @@
+[33m0a57f84[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Improve mobile navbar and UI
+[33me1ba5dc[m Improve UI and user experience
+[33m494e20f[m Change website favicon
+[33m158bba6[m Update website title
+[33mf953088[m Fix Firestore order status updates
+[33m26d599b[m fix Firestore order status update
+[33mcd529f8[m Fix order status and delete
+[33m5dcc133[m Fix order deletion
+[33m6e85ba1[m Add product details page and automatic inventory management
+[33me5d2494[m Fix checkout addDoc import
+[33m43ed432[m Fix build error
+[33m0bfd8c4[m Fix build error
+[33me0ab011[m Fix build error
+[33me566d23[m Fix CartContext filename
+[33m1f52525[m Fix CartContext filename
+[33m95aab69[m initial commit

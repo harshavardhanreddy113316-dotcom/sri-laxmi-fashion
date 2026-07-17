@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { useContext, useState } from "react";
 import { db } from "../firebase";
 import {
@@ -11,6 +12,7 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { CartContext } from "../context/CartContext";
+import axios from "axios";
 
 function Checkout() {
   const {
@@ -27,8 +29,7 @@ function Checkout() {
   const [stateName, setStateName] = useState("");
   const [pincode, setPincode] = useState("");
   const [landmark, setLandmark] = useState("");
-  const [paymentMethod, setPaymentMethod] =
-    useState("");
+  
     const [couponCode, setCouponCode] =
   useState("");
 
@@ -95,64 +96,143 @@ const applyCoupon = () => {
 };
   
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const orderId =
-      "SLF" + Math.floor(Math.random() * 100000);
+  try {
+    const payableAmount = Math.round(
+      total - discountAmount
+    );
 
-    const newOrder = {
-      orderId,
-      customerName: name,
-      phone,
-      house,
-      street,
-      city,
-      district,
-      stateName,
-      pincode,
-      landmark,
-      paymentMethod,
-      items: cartItems,
-      total,
-      status: "Pending",
-      date: new Date().toLocaleDateString(),
-      discount: discountAmount,
+    const { data } = await axios.post(
+      "http://localhost:5000/create-order",
+      {
+        amount: payableAmount,
+      }
+    );
+console.log(import.meta.env.VITE_RAZORPAY_KEY_ID);
+
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+
+      amount: data.amount,
+      currency: data.currency,
+      order_id: data.id,
+
+      name: "Sri Laxmi Fashion",
+
+      description: "Order Payment",
+
+      handler: async function (response) {
+        const orderId =
+          "SLF" +
+          Math.floor(Math.random() * 100000);
+
+        const newOrder = {
+          orderId,
+
+          customerName: name,
+          phone,
+
+          house,
+          street,
+          city,
+          district,
+          stateName,
+          pincode,
+          landmark,
+
+          items: cartItems,
+
+          total: payableAmount,
+
+          discount: discountAmount,
+
+          couponApplied,
+
+          paymentStatus: "Paid",
+
+          razorpayOrderId:
+            response.razorpay_order_id,
+
+          razorpayPaymentId:
+            response.razorpay_payment_id,
+
+          status: "Pending",
+
+          date:
+            new Date().toLocaleDateString(),
+        };
+
+        await addDoc(
+          collection(db, "orders"),
+          newOrder
+        );
+
+        // Update stock
+        for (const item of cartItems) {
+          const productRef = doc(
+            db,
+            "products",
+            item.id
+          );
+
+          const productSnap =
+            await getDoc(productRef);
+
+          if (productSnap.exists()) {
+            const currentStock =
+              productSnap.data().stock || 0;
+
+            await updateDoc(productRef, {
+              stock: Math.max(
+                currentStock - item.quantity,
+                0
+              ),
+            });
+          }
+        }
+
+        localStorage.setItem(
+          "lastOrderId",
+          orderId
+        );
+
+        clearCart();
+
+        window.location.href =
+          "/order-success";
+      },
+
+      prefill: {
+        name,
+        contact: phone,
+      },
+
+      theme: {
+        color: "#fbbf24",
+      },
     };
 
-   await addDoc(
-  collection(db, "orders"),
-  newOrder
-);
+    const razorpay =
+      new window.Razorpay(options);
 
-// Update stock
-for (const item of cartItems) {
-  const productRef = doc(db, "products", item.id);
+    razorpay.on(
+      "payment.failed",
+      function () {
+        toast.error("Payment Failed");
+      }
+    );
 
-  const productSnap = await getDoc(productRef);
+    razorpay.open();
+  } catch (error) {
+    console.error(error);
 
-  if (productSnap.exists()) {
-    const currentStock = productSnap.data().stock || 0;
-
-    await updateDoc(productRef, {
-      stock: Math.max(
-        currentStock - item.quantity,
-        0
-      ),
-    });
+    toast.error(
+      "Unable to start payment."
+    );
   }
-}
-
-    localStorage.setItem(
-  "lastOrderId",
-  orderId
-);
-
-clearCart();
-
-window.location.href =
-  "/order-success";
-  };
+};
 
   return (
     <div
@@ -377,37 +457,6 @@ window.location.href =
             }
           />
 
-          <h2>💳 Payment Method</h2>
-
-          <select
-            value={paymentMethod}
-            onChange={(e) =>
-              setPaymentMethod(
-                e.target.value
-              )
-            }
-            required
-          >
-            <option value="">
-              Select Payment Method
-            </option>
-
-            <option>
-              UPI Payment
-            </option>
-
-            <option>
-              Debit Card
-            </option>
-
-            <option>
-              Credit Card
-            </option>
-
-            <option>
-              Net Banking
-            </option>
-          </select>
 
           <button
             type="submit"
@@ -422,7 +471,7 @@ window.location.href =
               marginTop: "20px",
             }}
           >
-            Place Order 🛍️
+            Pay Securely with Razorpay
           </button>
         </form>
       </div>
