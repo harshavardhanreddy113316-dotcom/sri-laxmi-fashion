@@ -105,7 +105,7 @@ const applyCoupon = () => {
     );
 
     const { data } = await axios.post(
-      "http://localhost:5000/create-order",
+      "https://sri-laxmi-fashion.onrender.com/create-order",
       {
         amount: payableAmount,
       }
