@@ -29,7 +29,7 @@ const [couponRefresh, setCouponRefresh] =
 const [productList, setProductList] =
   useState([]);
 const [category, setCategory] = useState("jewellery");
-  
+  const [searchTerm, setSearchTerm] = useState("");
 const [deletedProducts, setDeletedProducts] = useState(() => {
   return (
     JSON.parse(
@@ -772,16 +772,58 @@ useEffect(() => {
   </button>
 </div>
 
+<input
+  type="text"
+  placeholder="🔍 Search by Product Name..."
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+  style={{
+    width: "100%",
+    padding: "15px",
+    marginBottom: "25px",
+    borderRadius: "10px",
+    border: "none",
+    background: "#374151",
+    color: "white",
+    fontSize: "16px",
+  }}
+/>
+
+<p
+  style={{
+    marginBottom: "15px",
+    color: "#9ca3af",
+  }}
+>
+  Showing {
+    productList
+      .filter(
+        (product) =>
+          product.category.toLowerCase() === category
+      )
+      .filter((product) =>
+        product.name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+      ).length
+  } products
+</p>
+
     <div
       style={{
         display: "grid",
         gap: "20px",
       }}
     >
-      {productList
+     {productList
   .filter(
     (product) =>
       product.category.toLowerCase() === category
+  )
+  .filter((product) =>
+    product.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
   )
   .map((product) => (
         <div
