@@ -603,11 +603,11 @@ useEffect(() => {
 
                        <button
   onClick={() => {
+    console.log(order);
     localStorage.setItem(
       "printOrder",
       JSON.stringify(order)
     );
-
     window.open("/shipping-label", "_blank");
   }}
   style={{

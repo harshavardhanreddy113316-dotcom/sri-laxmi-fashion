@@ -1,14 +1,13 @@
 /* ==========================================
-   SHIPPING LABEL
-   Sri Laxmi Fashion
+   SRI LAXMI FASHION — PARCEL LABEL
+   100mm x 150mm | Portrait | Thermal Print
+   Single page, pure CSS grid layout
 ========================================== */
 
-@page {
-    size: 100mm 150mm;
-    margin: 0;
+@page{
+    size:100mm 150mm;
+    margin:0;
 }
-
-/* Only affects Shipping Label */
 
 .shipping-label,
 .shipping-label *{
@@ -22,16 +21,20 @@
     height:150mm;
 
     background:#fff;
-
     color:#000;
 
-    margin:auto;
+    display:grid;
 
-    padding:5mm;
+    /* header | from+order | TO (largest) | products+sticker | footer */
+    grid-template-rows:
+    auto
+    auto
+    auto
+    1fr;
 
-    display:flex;
+    gap:1.5mm;
 
-    flex-direction:column;
+    padding:2.5mm;
 
     overflow:hidden;
 
@@ -39,265 +42,275 @@
 
 /* ================= HEADER ================= */
 
-.label-header{
+.header{
 
+    border:1.5px solid #000;
     text-align:center;
-
-    border-bottom:2px solid #000;
-
-    padding-bottom:3mm;
-
-    margin-bottom:3mm;
+    padding:1.5mm 2mm;
 
 }
 
-.store-name{
+.company-name{
 
-    font-size:22px;
-
+    font-size:16px;
     font-weight:700;
+    letter-spacing:0.5px;
+    line-height:1.1;
 
 }
 
-.label-title{
+.label-name{
 
-    margin-top:2px;
-
-    font-size:10px;
-
-    letter-spacing:2px;
-
-}
-
-/* ================= COMMON ================= */
-
-.label-section{
-
-    margin-bottom:3mm;
+    font-size:9px;
+    margin-top:0.8mm;
+    letter-spacing:2.5px;
+    font-weight:600;
 
 }
 
-.section-heading{
+/* ================= SHARED BOX STYLE ================= */
 
-    background:#000;
+.from-box,
+.order-box,
+.to-box,
+.products-box,
+.sticker-box{
 
-    color:#fff;
+    border:1px solid #000;
+    padding:1.8mm 2mm;
+    overflow:hidden;
 
-    padding:3px 8px;
+}
 
-    font-size:11px;
+.box-title{
 
-    font-weight:bold;
-
+    font-size:8.5px;
+    font-weight:700;
     letter-spacing:1px;
-
-    margin-bottom:2mm;
+    border-bottom:1px solid #000;
+    margin-bottom:1.5mm;
+    padding-bottom:0.8mm;
 
 }
 
-/* ================= FROM ================= */
+/* ================= ROW 1: FROM + ORDER ================= */
 
-.address{
+.row-top{
 
-    font-size:11px;
-
-    line-height:1.3;
+    display:grid;
+    grid-template-columns:58% 42%;
+    gap:1.5mm;
 
 }
 
 .shop-name{
 
-    font-size:14px;
-
-    font-weight:bold;
-
-    margin-bottom:1mm;
+    font-size:10.5px;
+    font-weight:700;
+    margin-bottom:0.8mm;
 
 }
 
-/* ================= TO ================= */
+.from-box{
 
-.receiver{
-
-    flex:1;
-
-}
-
-.receiver-name{
-
-    font-size:18px;
-
-    font-weight:bold;
-
-    margin-bottom:2mm;
-
-}
-
-.receiver-phone{
-
-    font-size:13px;
-
-    font-weight:bold;
-
-    margin-bottom:2mm;
-
-}
-
-.receiver-address{
-
-    font-size:12px;
-
+    font-size:8px;
     line-height:1.35;
 
 }
 
-/* ================= ORDER DETAILS ================= */
-
-.order-details{
+.detail-row{
 
     display:flex;
-
     justify-content:space-between;
-
-    border-top:2px solid #000;
-
-    border-bottom:2px solid #000;
-
-    padding:2.5mm 0;
-
-    margin-bottom:3mm;
+    align-items:baseline;
+    margin-bottom:1.6mm;
+    gap:2mm;
 
 }
 
-.detail-box{
+.detail-row:last-child{
+
+    margin-bottom:0;
+
+}
+
+.detail-row span{
+
+    font-size:7.5px;
+    color:#555;
+    white-space:nowrap;
+
+}
+
+.detail-row strong{
+
+    font-size:8.5px;
+    text-align:right;
+
+}
+
+/* ================= ROW 2: TO (LARGEST SECTION) ================= */
+
+.to-box{
 
     display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    gap:1mm;
+    height:auto;
 
+}
+
+.customer-name{
+
+    font-size:19px;
+    font-weight:700;
+    line-height:1.2;
+
+}
+
+.customer-address{
+
+    font-size:11px;
+    line-height:1.55;
+    border-top:1px solid #000;
+    padding-top:1.8mm;
+
+}
+
+
+
+.customer-phone{
+
+    margin-top:2mm;
+
+    padding-top:2mm;
+
+    border-top:1px solid #000;
+
+    font-size:9px;
+
+    font-weight:700;
+
+}
+
+
+
+/* ================= ROW 3: PRODUCTS + STICKER ================= */
+
+.row-bottom{
+
+    display:grid;
+    grid-template-columns:64% 36%;
+    gap:1.5mm;
+
+}
+
+.products-box{
+
+    display:flex;
     flex-direction:column;
 
 }
 
-.detail-title{
+.product-list{
 
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:1mm;
     font-size:9px;
 
-    color:#666;
+}
+
+.product-row{
+
+    display:flex;
+    justify-content:space-between;
+    font-size:8.5px;
 
 }
 
-.detail-value{
+.product-name{
 
-    font-size:11px;
-
-    font-weight:bold;
+    width:78%;
 
 }
 
-.detail-paid{
+.product-qty{
 
-    font-size:11px;
-
-    font-weight:bold;
-
-    color:#000;
-
-}
-
-/* ================= STICKER ================= */
-
-.sticker-section{
-
-    margin-bottom:3mm;
+    font-weight:700;
 
 }
 
 .sticker-box{
 
-    border:2px solid #000;
+    display:flex;
+    flex-direction:column;
 
-    height:26mm;
+}
+
+.sticker-area{
+
+    height:45mm;
+
+    border:2px dashed #666;
 
     display:flex;
-
-    flex-direction:column;
 
     justify-content:center;
 
     align-items:center;
 
     text-align:center;
-
-}
-
-.sticker-title{
-
-    font-size:14px;
-
-    font-weight:bold;
-
-}
-
-.sticker-subtitle{
-
-    font-size:11px;
-
-    margin-top:2mm;
-
-}
-
-.sticker-note{
-
-    margin-top:2mm;
 
     font-size:10px;
 
     color:#555;
 
+    line-height:1.5;
+
+    font-weight:600;
+
+}
+
+.parcel-text{
+
+    margin-top:1.5mm;
+    text-align:center;
+    font-size:9px;
+    font-weight:700;
+    border-top:1px solid #000;
+    padding-top:1mm;
+
 }
 
 /* ================= FOOTER ================= */
 
-.label-footer{
+.footer{
 
-    margin-top:auto;
-
-    border-top:2px solid #000;
-
-    padding-top:2mm;
-
+    border-top:1px solid #000;
     text-align:center;
+    padding-top:1.5mm;
+    font-size:8.5px;
+    line-height:1.3;
 
 }
 
-.thank-you{
+.footer span{
 
-    font-size:13px;
-
-    font-weight:bold;
+    font-weight:700;
 
 }
 
-.footer-store{
-
-    font-size:10px;
-
-    margin-top:1mm;
-
-}
-
-/* ================= ERROR ================= */
+/* ================= ERROR STATE ================= */
 
 .label-error{
 
     display:flex;
-
     justify-content:center;
-
     align-items:center;
-
     height:100vh;
-
-    font-size:28px;
 
 }
 
@@ -308,18 +321,17 @@
     @page{
 
         size:100mm 150mm;
-
         margin:0;
 
     }
 
-    body{
+    html, body{
 
         margin:0;
-
         padding:0;
-
         background:#fff;
+        width:100mm;
+        height:150mm;
 
     }
 
@@ -339,22 +351,11 @@
     .shipping-label{
 
         position:absolute;
-
         left:0;
-
         top:0;
-
         width:100mm;
-
         height:150mm;
-
-        margin:0;
-
-        page-break-after:avoid;
-
-        page-break-before:avoid;
-
-        page-break-inside:avoid;
+        overflow:hidden;
 
     }
 

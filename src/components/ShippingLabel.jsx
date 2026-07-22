@@ -2,16 +2,13 @@ import "./../styles/ShippingLabel.css";
 import { useEffect } from "react";
 
 function ShippingLabel() {
-
-  const order = JSON.parse(
-    localStorage.getItem("printOrder")
-  );
+  const order = JSON.parse(localStorage.getItem("printOrder"));
 
   useEffect(() => {
     if (order) {
       setTimeout(() => {
         window.print();
-      }, 600);
+      }, 500);
     }
   }, []);
 
@@ -24,68 +21,89 @@ function ShippingLabel() {
   }
 
   return (
-
     <div className="shipping-label">
 
       {/* ================= HEADER ================= */}
 
-      <div className="label-header">
+      <div className="header">
 
-        <div className="store-name">
+        <div className="company-name">
           Sri Laxmi Fashion
         </div>
 
-        <div className="label-title">
-          ONLINE SHIPPING LABEL
+        <div className="label-name">
+          PARCEL LABEL
         </div>
 
       </div>
 
-      {/* ================= FROM ================= */}
+      {/* ================= ROW 1: FROM + ORDER DETAILS ================= */}
 
-      <div className="label-section">
+      <div className="row-top">
 
-        <div className="section-heading">
+        {/* FROM */}
 
-          FROM
+        <div className="from-box">
 
-        </div>
-
-        <div className="address">
+          <div className="box-title">
+            FROM
+          </div>
 
           <div className="shop-name">
-
             Sri Laxmi Fashion
-
           </div>
 
           <div>
-
             Balabhadrapuram
-
           </div>
 
           <div>
-
             Biccavolu Mandal
-
           </div>
 
           <div>
-
             East Godavari
-
           </div>
 
           <div>
-
             Andhra Pradesh - 533343
-
           </div>
 
           <div>
+            Phone : 7794055777
+          </div>
 
-            📞 7794055777
+        </div>
+
+        {/* ORDER DETAILS */}
+
+        <div className="order-box">
+
+          <div className="box-title">
+            ORDER DETAILS
+          </div>
+
+          <div className="detail-row">
+
+            <span>Order ID</span>
+
+            <strong>{order.orderId}</strong>
+
+          </div>
+
+          <div className="detail-row">
+
+            <span>Date</span>
+
+            <strong>{order.date}</strong>
+
+          </div>
+
+          <div className="detail-row">
+
+            <span>Payment</span>
+
+            <strong>{order.paymentStatus}</strong>
 
           </div>
 
@@ -93,29 +111,21 @@ function ShippingLabel() {
 
       </div>
 
-      {/* ================= TO ================= */}
+      {/* ================= ROW 2: TO (LARGEST SECTION) ================= */}
 
-      <div className="label-section receiver">
+      <div className="to-box">
 
-        <div className="section-heading">
-
+        <div className="box-title">
           TO
-
         </div>
 
-        <div className="receiver-name">
+        <div className="customer-name">
 
           {order.customerName}
 
         </div>
 
-        <div className="receiver-phone">
-
-          📞 {order.phone}
-
-        </div>
-
-        <div className="receiver-address">
+        <div className="customer-address">
 
           <div>{order.house}</div>
 
@@ -126,121 +136,66 @@ function ShippingLabel() {
           <div>{order.district}</div>
 
           <div>
-
             {order.stateName}
-
           </div>
 
           <div>
-
-            PIN - {order.pincode}
-
+            {order.pincode}
           </div>
+
+        </div>
+
+        <div className="customer-phone">
+
+          Phone : {order.phone}
 
         </div>
 
       </div>
 
-      {/* ================= ORDER DETAILS ================= */}
+     {/* ================= INDIA POST STICKER ================= */}
 
-      <div className="order-details">
+<div className="sticker-box">
 
-        <div className="detail-box">
+  <div className="box-title">
+    INDIA POST STICKER
+  </div>
 
-          <span className="detail-title">
+  <div className="sticker-area">
 
-            Order ID
+    Official India Post
 
-          </span>
+    <br />
 
-          <span className="detail-value">
+    QR / Barcode Sticker
 
-            {order.orderId}
+    <br />
 
-          </span>
+    <br />
 
-        </div>
+    (Paste Sticker Here)
 
-        <div className="detail-box">
+  </div>
 
-          <span className="detail-title">
+</div>
 
-            Date
+{/* ================= FOOTER ================= */}
 
-          </span>
+<div className="footer">
 
-          <span className="detail-value">
+  Thank You For Shopping
 
-            {order.date}
+  <br />
 
-          </span>
+  <span>
+    Sri Laxmi Fashion
+  </span>
 
-        </div>
+</div>
 
-        <div className="detail-box">
+</div>
 
-          <span className="detail-title">
-
-            Payment
-
-          </span>
-
-          <span className="detail-paid">
-
-            {order.paymentStatus}
-
-          </span>
-
-        </div>
-
-      </div>
-            {/* ================= INDIA POST STICKER ================= */}
-
-      <div className="sticker-section">
-
-        <div className="section-heading">
-          INDIA POST STICKER
-        </div>
-
-        <div className="sticker-box">
-
-          <div className="sticker-title">
-            Official India Post
-          </div>
-
-          <div className="sticker-subtitle">
-            QR / Barcode Sticker
-          </div>
-
-          <div className="sticker-note">
-            Paste Official Sticker Here
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* ================= THANK YOU ================= */}
-
-      <div className="label-footer">
-
-        <div className="thank-you">
-
-          Thank You ❤️
-
-        </div>
-
-        <div className="footer-store">
-
-          Sri Laxmi Fashion
-
-        </div>
-
-      </div>
-
-    </div>
-
-  );
+);
 
 }
 
