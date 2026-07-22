@@ -1,3 +1,4 @@
+import ShippingLabel from "../components/ShippingLabel";
 import { useState, useEffect } from "react";
 import logo from "../images/logo.jpeg";
 import "./Admin.css";
@@ -599,6 +600,29 @@ useEffect(() => {
                         >
                           ✅ Delivered
                         </button>
+
+                       <button
+  onClick={() => {
+    localStorage.setItem(
+      "printOrder",
+      JSON.stringify(order)
+    );
+
+    window.open("/shipping-label", "_blank");
+  }}
+  style={{
+    background: "#6d28d9",
+    color: "white",
+    border: "none",
+    padding: "10px",
+    borderRadius: "8px",
+    cursor: "pointer",
+    width: "100%",
+    marginTop: "10px",
+  }}
+>
+  🖨 Print Shipping Label
+</button>
                       </div>
                     </div>
                   ))}

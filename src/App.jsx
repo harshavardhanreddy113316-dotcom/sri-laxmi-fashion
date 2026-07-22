@@ -1,3 +1,4 @@
+import ShippingLabel from "./components/ShippingLabel";
 import { useState } from "react";
 import Contact from "./pages/Contact";
 import TrackOrder from "./pages/TrackOrder";
@@ -54,6 +55,10 @@ function App() {
         path="/contact"
         element={<Contact />}
       />
+   <Route
+  path="/shipping-label"
+  element={<ShippingLabel />}
+/>
 
       <Route
   path="/product/:id"
