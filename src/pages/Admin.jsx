@@ -97,6 +97,10 @@ const deliveredOrders = orders.filter(
   (order) => order.status === "Delivered"
 ).length;
 
+const lowStockProducts = productList.filter(
+  (product) => Number(product.stock) > 0 && Number(product.stock) <= 5
+).length;
+
   const updateTrackingNumber = (
   orderId,
   trackingId
@@ -353,7 +357,7 @@ useEffect(() => {
 
     <div className="card">
       <h3>⚠ Low Stock</h3>
-      <h1>0</h1>
+      <h1>{lowStockProducts}</h1>
     </div>
 
   </div>
