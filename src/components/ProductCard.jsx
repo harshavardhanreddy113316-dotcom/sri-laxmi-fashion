@@ -60,14 +60,18 @@ function ProductCard({ product }) {
 
 <p
   className={
-    product.stock > 0
-      ? "stock-green"
-      : "stock-red"
+    product.stock <= 0
+      ? "stock-red"
+      : product.stock <= 5
+      ? "stock-orange"
+      : "stock-green"
   }
 >
-  {product.stock > 0
-    ? "🟢 In Stock"
-    : "🔴 Out of Stock"}
+  {product.stock <= 0
+    ? "🔴 Out of Stock"
+    : product.stock <= 5
+    ? `🟡 Only ${product.stock} Left!`
+    : "🟢 In Stock"}
 </p>
 
       <button
