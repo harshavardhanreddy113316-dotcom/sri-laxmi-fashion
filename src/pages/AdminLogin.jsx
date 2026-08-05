@@ -1,51 +1,24 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase"; // Change to "./firebase" if this file is directly inside src
 
 function AdminLogin() {
-  const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [currentPassword, setCurrentPassword] =
-  useState("");
 
-const [newPassword, setNewPassword] =
-  useState("");
-
-const [confirmPassword, setConfirmPassword] =
-  useState("");
-
-const [securityQuestion, setSecurityQuestion] =
-  useState(
-    localStorage.getItem("securityQuestion") || ""
-  );
-
-const [securityAnswer, setSecurityAnswer] =
-  useState(
-    localStorage.getItem("securityAnswer") || ""
-  );
-
-  const adminEmail = "srilaxmifashion4@gmail.com";
-  const adminPassword = "Anil777";
-
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (
-      email === adminEmail &&
-      password === adminPassword
-    ) {
-      console.log("Login Success");
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
 
-localStorage.setItem("adminLoggedIn", "true");
+      localStorage.setItem("adminLoggedIn", "true");
 
-console.log(localStorage.getItem("adminLoggedIn"));
-
-window.location.href = "/admin";
-
-    } else {
+      window.location.href = "/admin";
+    } catch (err) {
+      console.error(err);
       setError("❌ Invalid Email or Password");
     }
   };
@@ -84,9 +57,7 @@ window.location.href = "/admin";
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) =>
-            setEmail(e.target.value)
-          }
+          onChange={(e) => setEmail(e.target.value)}
           required
           style={{
             width: "100%",
@@ -98,14 +69,10 @@ window.location.href = "/admin";
         />
 
         <input
-          type={
-            showPassword ? "text" : "password"
-          }
+          type={showPassword ? "text" : "password"}
           placeholder="Password"
           value={password}
-          onChange={(e) =>
-            setPassword(e.target.value)
-          }
+          onChange={(e) => setPassword(e.target.value)}
           required
           style={{
             width: "100%",
@@ -118,9 +85,7 @@ window.location.href = "/admin";
 
         <button
           type="button"
-          onClick={() =>
-            setShowPassword(!showPassword)
-          }
+          onClick={() => setShowPassword(!showPassword)}
           style={{
             marginBottom: "20px",
             background: "transparent",
@@ -129,9 +94,7 @@ window.location.href = "/admin";
             cursor: "pointer",
           }}
         >
-          {showPassword
-            ? "🙈 Hide Password"
-            : "👁 Show Password"}
+          {showPassword ? "🙈 Hide Password" : "👁 Show Password"}
         </button>
 
         {error && (
