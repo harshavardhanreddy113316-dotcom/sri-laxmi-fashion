@@ -79,6 +79,46 @@ const IconShield = (props) => (
   </svg>
 );
 
+const toFirestoreSafe = (value) => {
+  if (value === undefined || value === null) {
+    return null;
+  }
+
+  if (typeof value === "number" && Number.isNaN(value)) {
+    return 0;
+  }
+
+  if (
+    typeof value === "function" ||
+    typeof value === "symbol" ||
+    typeof value === "bigint"
+  ) {
+    return null;
+  }
+
+  if (Array.isArray(value)) {
+    return value
+      .map(toFirestoreSafe)
+      .filter((item) => item !== null);
+  }
+
+  if (typeof value === "object") {
+    const clean = {};
+
+    for (const [key, child] of Object.entries(value)) {
+      const safe = toFirestoreSafe(child);
+
+      if (safe !== null) {
+        clean[key] = safe;
+      }
+    }
+
+    return clean;
+  }
+
+  return value;
+};
+
 function Checkout() {
   const {
   cartItems,
@@ -175,7 +215,15 @@ const applyCoupon = () => {
         amount: payableAmount,
       }
     );
-console.log(import.meta.env.VITE_RAZORPAY_KEY_ID);
+    console.log(
+      "[Checkout] Razorpay order created on backend:",
+      data
+    );
+
+    console.log(
+      "[Checkout] Razorpay key id:",
+      import.meta.env.VITE_RAZORPAY_KEY_ID
+    );
 
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -189,84 +237,132 @@ console.log(import.meta.env.VITE_RAZORPAY_KEY_ID);
       description: "Order Payment",
 
       handler: async function (response) {
-        const orderId =
-          "SLF" +
-          Math.floor(Math.random() * 100000);
-
-        const newOrder = {
-          orderId,
-
-          customerName: name,
-          phone,
-
-          house,
-          street,
-          city,
-          district,
-          stateName,
-          pincode,
-          landmark,
-
-          items: cartItems,
-
-          total: payableAmount,
-
-          discount: discountAmount,
-
-          couponApplied,
-
-          paymentStatus: "Paid",
-
-          razorpayOrderId:
-            response.razorpay_order_id,
-
-          razorpayPaymentId:
-            response.razorpay_payment_id,
-
-          status: "Pending",
-
-          date:
-            new Date().toLocaleDateString(),
-        };
-
-        await addDoc(
-          collection(db, "orders"),
-          newOrder
-        );
-
-        // Update stock
-        for (const item of cartItems) {
-          const productRef = doc(
-            db,
-            "products",
-            item.id
+        try {
+          console.log(
+            "[Checkout] Razorpay payment success handler invoked.",
+            {
+              razorpayOrderId:
+                response.razorpay_order_id,
+              razorpayPaymentId:
+                response.razorpay_payment_id,
+            }
           );
 
-          const productSnap =
-            await getDoc(productRef);
+          const orderId =
+            "SLF" +
+            Math.floor(Math.random() * 100000);
 
-          if (productSnap.exists()) {
-            const currentStock =
-              productSnap.data().stock || 0;
+          const newOrder = {
+            orderId,
 
-            await updateDoc(productRef, {
-              stock: Math.max(
-                currentStock - item.quantity,
-                0
-              ),
-            });
+            customerName: name,
+            phone,
+
+            house,
+            street,
+            city,
+            district,
+            stateName,
+            pincode,
+            landmark,
+
+            items: cartItems,
+
+            total: payableAmount,
+
+            discount: discountAmount,
+
+            couponApplied,
+
+            paymentStatus: "Paid",
+
+            razorpayOrderId:
+              response.razorpay_order_id,
+
+            razorpayPaymentId:
+              response.razorpay_payment_id,
+
+            status: "Pending",
+
+            date:
+              new Date().toLocaleDateString(),
+          };
+
+          const orderToSave =
+            toFirestoreSafe(newOrder);
+
+          console.log(
+            "[Checkout] Writing order to Firestore:",
+            orderToSave
+          );
+
+          const orderRef = await addDoc(
+            collection(db, "orders"),
+            orderToSave
+          );
+
+          console.log(
+            "[Checkout] Order SAVED to Firestore. Document id:",
+            orderRef.id,
+            "Order id:",
+            orderId
+          );
+
+          try {
+            // Update stock
+            for (const item of cartItems) {
+              const productRef = doc(
+                db,
+                "products",
+                item.id
+              );
+
+              const productSnap =
+                await getDoc(productRef);
+
+              if (productSnap.exists()) {
+                const currentStock =
+                  productSnap.data().stock || 0;
+
+                await updateDoc(productRef, {
+                  stock: Math.max(
+                    currentStock - item.quantity,
+                    0
+                  ),
+                });
+              }
+            }
+          } catch (stockError) {
+            console.warn(
+              "[Checkout] Order saved but stock update failed:",
+              stockError
+            );
           }
+
+          localStorage.setItem(
+            "lastOrderId",
+            orderId
+          );
+
+          clearCart();
+
+          console.log(
+            "[Checkout] Redirecting to order success page. Order id:",
+            orderId
+          );
+
+          window.location.href =
+            "/order-success";
+        } catch (error) {
+          console.error(
+            "[Checkout] Order was NOT saved to Firestore after successful payment:",
+            error
+          );
+
+          toast.error(
+            "Payment was successful, but we could not save your order. Please contact support with your payment ID."
+          );
         }
-
-        localStorage.setItem(
-          "lastOrderId",
-          orderId
-        );
-
-        clearCart();
-
-        window.location.href =
-          "/order-success";
       },
 
       prefill: {
@@ -289,9 +385,16 @@ console.log(import.meta.env.VITE_RAZORPAY_KEY_ID);
       }
     );
 
+    console.log(
+      "[Checkout] Opening Razorpay checkout modal."
+    );
+
     razorpay.open();
   } catch (error) {
-    console.error(error);
+    console.error(
+      "[Checkout] Unable to start payment:",
+      error
+    );
 
     toast.error(
       "Unable to start payment."
