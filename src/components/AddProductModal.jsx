@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
-import axios from "axios";
+import { supabase } from "../supabase";
 import "./AddProductModal.css";
 
 function AddProductModal({
@@ -21,127 +21,142 @@ function AddProductModal({
 
   const [images, setImages] = useState([]);
 
- const handleImageUpload = (e) => {
-  const files = Array.from(e.target.files);
+  const handleImageUpload = (e) => {
+    const files = Array.from(e.target.files);
 
-  setImages(files);
-};
-  
+    setImages(files);
+  };
 
- const saveProduct = async () => {
-  if (
-    !product.name ||
-    !product.price ||
-    !product.stock
-  ) {
-    alert("Please fill all required fields.");
-    return;
-  }
-
-  try {
-    const uploadedImages = [];
-
-    for (const image of images) {
-      const formData = new FormData();
-
-      formData.append("file", image);
-      formData.append(
-        "upload_preset",
-        "srilaxmifashion"
-      );
-
-      const response = await axios.post(
-        "https://api.cloudinary.com/v1_1/i2lem7e7/image/upload",
-        formData
-      );
-
-      uploadedImages.push(
-        response.data.secure_url
-      );
+  const saveProduct = async () => {
+    if (
+      !product.name ||
+      !product.price ||
+      !product.stock
+    ) {
+      alert("Please fill all required fields.");
+      return;
     }
 
-    const newProduct = {
-      ...product,
+    try {
+      const uploadedImages = [];
 
-      image:
-        uploadedImages.length > 0
-          ? uploadedImages[0]
-          : "",
+      // Upload images to Supabase Storage
+      for (const image of images) {
+        const fileExt = image.name.split(".").pop();
 
-      images: uploadedImages,
+        const fileName = `${Date.now()}-${Math.random()
+          .toString(36)
+          .substring(2)}.${fileExt}`;
 
-      price: Number(product.price),
-      originalPrice: Number(
-        product.originalPrice || 0
-      ),
-      discount: Number(
-        product.discount || 0
-      ),
-      stock: Number(product.stock),
-    };
+        const filePath = `products/${fileName}`;
 
-    const docRef = await addDoc(
-      collection(db, "products"),
-      newProduct
-    );
+        const { error: uploadError } = await supabase.storage
+          .from("product-images")
+          .upload(filePath, image, {
+            cacheControl: "3600",
+            upsert: false,
+          });
 
-    setProductList((prev) => [
-      ...prev,
-      {
-        ...newProduct,
-        id: docRef.id,
-      },
-    ]);
+        if (uploadError) {
+          throw uploadError;
+        }
 
-    alert("✅ Product Added Successfully");
+        // Get public URL
+        const { data } = supabase.storage
+          .from("product-images")
+          .getPublicUrl(filePath);
 
-    onClose();
-  } catch (error) {
-    console.error(error);
+        uploadedImages.push(data.publicUrl);
+      }
 
-    alert(
-      "❌ Failed to upload image. Check Cloudinary settings."
-    );
-  }
-};
+      // Create product object
+      const newProduct = {
+        ...product,
+
+        image:
+          uploadedImages.length > 0
+            ? uploadedImages[0]
+            : "",
+
+        images: uploadedImages,
+
+        price: Number(product.price),
+
+        originalPrice: Number(
+          product.originalPrice || 0
+        ),
+
+        discount: Number(
+          product.discount || 0
+        ),
+
+        stock: Number(product.stock),
+      };
+
+      // Save product to Firebase
+      const docRef = await addDoc(
+        collection(db, "products"),
+        newProduct
+      );
+
+      // Update local product list
+      setProductList((prev) => [
+        ...prev,
+        {
+          ...newProduct,
+          id: docRef.id,
+        },
+      ]);
+
+      alert("✅ Product Added Successfully");
+
+      onClose();
+    } catch (error) {
+      console.error("Product upload error:", error);
+
+      alert(
+        "❌ Failed to upload product. Please try again."
+      );
+    }
+  };
 
   return (
     <div className="modal-overlay">
       <div className="modal-box">
         <h2>➕ Add Product</h2>
 
-    <h3>📷 Product Images</h3>
+        <h3>📷 Product Images</h3>
 
-<input
-  type="file"
-  multiple
-  accept="image/*"
-  onChange={handleImageUpload}
-/>
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={handleImageUpload}
+        />
 
-<div
-  style={{
-    display: "flex",
-    gap: "10px",
-    flexWrap: "wrap",
-    marginBottom: "20px",
-  }}
->
-  {images.map((img, index) => (
-    <img
-      key={index}
-      src={URL.createObjectURL(img)}
-      alt="Preview"
-      style={{
-        width: "80px",
-        height: "80px",
-        objectFit: "cover",
-        borderRadius: "10px",
-        border: "2px solid #374151",
-      }}
-    />
-  ))}
-</div>  
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+            flexWrap: "wrap",
+            marginBottom: "20px",
+          }}
+        >
+          {images.map((img, index) => (
+            <img
+              key={index}
+              src={URL.createObjectURL(img)}
+              alt="Preview"
+              style={{
+                width: "80px",
+                height: "80px",
+                objectFit: "cover",
+                borderRadius: "10px",
+                border: "2px solid #374151",
+              }}
+            />
+          ))}
+        </div>
 
         <input
           type="text"
