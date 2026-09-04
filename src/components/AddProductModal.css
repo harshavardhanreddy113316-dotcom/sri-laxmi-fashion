@@ -1,67 +1,237 @@
+/* AddProductModal.css - Minimal, relying on Admin.css modal system */
+
+/* Override for AddProductModal.css to not conflict with Admin.css */
+/* All shared modal styles are now in Admin.css */
+
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  padding: 20px;
 }
 
 .modal-box {
-  width: 650px;
+  width: 100%;
+  max-width: 640px;
   max-height: 90vh;
   overflow-y: auto;
-  background: #1f2937;
-  color: white;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 0 30px rgba(0,0,0,.4);
+  background: #13171e;
+  border: 1px solid #1a1f2a;
+  color: #e5e5e5;
+  border-radius: 14px;
+  padding: 0;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
 }
 
-.modal-box h2{
-    margin-bottom:25px;
+.modal-box h2 {
+  margin: 0;
+}
+
+.modal-box label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8892a4;
+  margin-bottom: 5px;
 }
 
 .modal-box input,
 .modal-box select,
-.modal-box textarea{
-    width:100%;
-    padding:14px;
-    margin-bottom:18px;
-    border:none;
-    border-radius:10px;
-    background:#374151;
-    color:white;
-    font-size:15px;
-    box-sizing:border-box;
+.modal-box textarea {
+  width: 100%;
+  padding: 9px 12px;
+  background: #1a1f2a;
+  border: 1px solid #222836;
+  border-radius: 8px;
+  color: #e5e5e5;
+  font-size: 13px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
 }
 
-.modal-box textarea{
-    resize:none;
-    height:120px;
+.modal-box input:focus,
+.modal-box select:focus,
+.modal-box textarea:focus {
+  border-color: #d4af37;
 }
 
-.modal-buttons{
-    display:flex;
-    justify-content:flex-end;
-    gap:15px;
+.modal-box textarea {
+  resize: vertical;
+  min-height: 80px;
 }
 
-.cancel-btn{
-    background:#ef4444;
-    color:white;
-    border:none;
-    padding:12px 20px;
-    border-radius:10px;
-    cursor:pointer;
+.modal-image-preview {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
 }
 
-.save-btn{
-    background:#2563eb;
-    color:white;
-    border:none;
-    padding:12px 20px;
-    border-radius:10px;
-    cursor:pointer;
+.modal-image-preview img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #222836;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cancel-btn {
+  background: #1a1f2a;
+  color: #e5e5e5;
+  border: 1px solid #222836;
+  padding: 9px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+  background: #222836;
+}
+
+.save-btn {
+  background: #d4af37;
+  color: #0f0f0f;
+  border: none;
+  padding: 9px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.save-btn:hover {
+  background: #e0be4a;
+}
+
+/* Admin login page */
+.admin-login-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0b0e14;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  padding: 20px;
+}
+
+.admin-login-card {
+  background: #13171e;
+  border: 1px solid #1a1f2a;
+  border-radius: 16px;
+  padding: 36px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.admin-login-brand {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.admin-login-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+  font-size: 22px;
+}
+
+.admin-login-brand h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f0f0f0;
+  margin: 0 0 4px;
+}
+
+.admin-login-brand p {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.admin-login-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  color: #6b7280;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  transition: color 0.2s;
+}
+
+.admin-login-toggle:hover {
+  color: #d4af37;
+}
+
+.admin-login-error {
+  color: #ef4444;
+  font-size: 13px;
+  padding: 10px 14px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.admin-login-submit {
+  width: 100%;
+  padding: 12px;
+  background: #d4af37;
+  color: #0f0f0f;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 4px;
+}
+
+.admin-login-submit:hover {
+  background: #e0be4a;
+}
+
+.admin-login-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.admin-login-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+@media (max-width: 480px) {
+  .admin-login-card {
+    padding: 28px 24px;
+  }
 }

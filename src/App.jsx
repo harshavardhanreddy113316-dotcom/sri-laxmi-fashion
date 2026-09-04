@@ -95,7 +95,12 @@ function App() {
 
       <Route
         path="/product/:id"
-        element={<ProductDetails />}
+        element={
+          <ProductDetails
+            search={search}
+            setSearch={setSearch}
+          />
+        }
       />
     </Routes>
   );

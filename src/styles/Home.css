@@ -1,0 +1,284 @@
+/* ===========================
+   HOME PAGE
+   =========================== */
+
+/* --- Section Common --- */
+
+.home-heading {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.home-heading h2 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 6px;
+}
+
+.home-heading p {
+  color: #777;
+  font-size: 15px;
+}
+
+.home-gold-line {
+  width: 48px;
+  height: 2px;
+  background: #d4af37;
+  border-radius: 2px;
+  margin: 14px auto 0;
+}
+
+.home-sec {
+  padding: 48px 24px 56px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  justify-items: center;
+}
+
+/* --- Category Selector --- */
+
+.home-cats {
+  padding: 52px 24px 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.home-cats-row {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.home-cat-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border: 1px solid #2a2a2a;
+  border-radius: 50px;
+  background: #151515;
+  color: #888;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.home-cat-btn:hover {
+  border-color: #444;
+  color: #ccc;
+}
+
+.home-cat-active-gold {
+  background: #d4af37;
+  color: #0f0f0f;
+  border-color: #d4af37;
+}
+
+.home-cat-active-gold:hover {
+  background: #e0be4a;
+  color: #0f0f0f;
+  border-color: #e0be4a;
+}
+
+.home-cat-active-blue {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+.home-cat-active-blue:hover {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+}
+
+.home-cat-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* --- Empty State --- */
+
+.home-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 64px 20px;
+}
+
+.home-empty h3 {
+  font-size: 20px;
+  color: #555;
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.home-empty p {
+  color: #444;
+  font-size: 14px;
+}
+
+/* --- Benefits --- */
+
+.home-benefits {
+  padding: 56px 24px;
+  background: #0c0c0c;
+  border-top: 1px solid #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.home-benefits-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.home-benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.home-benefit {
+  text-align: center;
+  padding: 28px 16px;
+  border-radius: 14px;
+  background: #141414;
+  border: 1px solid #1e1e1e;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.home-benefit:hover {
+  border-color: rgba(212, 175, 55, 0.3);
+  transform: translateY(-3px);
+}
+
+.home-benefit-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+  font-size: 24px;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.home-benefit h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #e5e5e5;
+  margin: 0 0 6px;
+}
+
+.home-benefit p {
+  font-size: 13px;
+  color: #777;
+  line-height: 1.5;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+
+@media (max-width: 1024px) {
+  .home-heading h2 {
+    font-size: 28px;
+  }
+
+  .home-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+
+  .home-benefits-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .home-sec {
+    padding: 36px 16px 44px;
+  }
+
+  .home-heading {
+    margin-bottom: 28px;
+  }
+
+  .home-heading h2 {
+    font-size: 24px;
+  }
+
+  .home-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .home-cat-btn {
+    padding: 10px 22px;
+    font-size: 14px;
+  }
+
+  .home-benefits {
+    padding: 40px 16px;
+  }
+
+  .home-benefits-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .home-benefit {
+    padding: 22px 14px;
+  }
+
+  .home-benefit-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+  }
+
+  .home-benefit h3 {
+    font-size: 13px;
+  }
+
+  .home-benefit p {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-cats {
+    padding: 40px 16px 12px;
+  }
+
+  .home-cat-btn {
+    padding: 10px 18px;
+    font-size: 13px;
+    gap: 6px;
+  }
+
+  .home-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .home-benefits-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .home-heading h2 {
+    font-size: 22px;
+  }
+}

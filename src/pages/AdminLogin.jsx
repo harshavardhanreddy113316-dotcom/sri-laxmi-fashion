@@ -1,129 +1,99 @@
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase"; // Change to "./firebase" if this file is directly inside src
+import { auth } from "../firebase";
+import "./Admin.css";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-
       localStorage.setItem("adminLoggedIn", "true");
-
       window.location.href = "/admin";
     } catch (err) {
       console.error(err);
-      setError("❌ Invalid Email or Password");
+      if (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password" || err.code === "auth/user-not-found") {
+        setError("Invalid email or password");
+      } else {
+        setError("Login failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "#111827",
-      }}
-    >
-      <form
-        onSubmit={handleLogin}
-        style={{
-          background: "#1f2937",
-          padding: "40px",
-          borderRadius: "20px",
-          width: "380px",
-          boxShadow: "0 0 20px rgba(0,0,0,0.4)",
-        }}
-      >
-        <h1
-          style={{
-            textAlign: "center",
-            color: "white",
-            marginBottom: "30px",
-          }}
-        >
-          🔒 Admin Login
-        </h1>
+    <div className="admin-login-page">
+      <div className="admin-login-card">
+        <div className="admin-login-brand">
+          <div className="admin-login-icon">&#128274;</div>
+          <h1>Admin Login</h1>
+          <p>Sri Laxmi Fashion Dashboard</p>
+        </div>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          style={{
-            width: "100%",
-            padding: "15px",
-            marginBottom: "20px",
-            borderRadius: "10px",
-            border: "none",
-          }}
-        />
+        <form onSubmit={handleLogin}>
+          <div className="modal-field">
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="admin@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoFocus
+            />
+          </div>
 
-        <input
-          type={showPassword ? "text" : "password"}
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{
-            width: "100%",
-            padding: "15px",
-            marginBottom: "15px",
-            borderRadius: "10px",
-            border: "none",
-          }}
-        />
+          <div className="modal-field">
+            <label>Password</label>
+            <div style={{ position: "relative" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                style={{ paddingRight: 60 }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="admin-login-toggle"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
+          </div>
 
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          style={{
-            marginBottom: "20px",
-            background: "transparent",
-            color: "#60a5fa",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          {showPassword ? "🙈 Hide Password" : "👁 Show Password"}
-        </button>
+          {error && (
+            <div className="admin-login-error">{error}</div>
+          )}
 
-        {error && (
-          <p
-            style={{
-              color: "#ef4444",
-              marginBottom: "15px",
-            }}
+          <button
+            type="submit"
+            className="admin-login-submit"
+            disabled={loading}
           >
-            {error}
-          </p>
-        )}
-
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "15px",
-            background: "#2563eb",
-            color: "white",
-            border: "none",
-            borderRadius: "10px",
-            fontSize: "18px",
-            cursor: "pointer",
-          }}
-        >
-          Login
-        </button>
-      </form>
+            {loading ? (
+              <span className="admin-login-loading">
+                <span className="admin-loading-spinner" style={{ width: 18, height: 18, borderWidth: 2, marginBottom: 0 }} />
+                Signing in...
+              </span>
+            ) : (
+              "Sign In"
+            )}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

@@ -7,88 +7,76 @@ function ProductCard({ product }) {
   const { addToCart } = useContext(CartContext);
   const navigate = useNavigate();
 
-  console.log("PRODUCT RECEIVED:", product);
-
   if (!product) {
-    return <h2>Product is Undefined</h2>;
+    return null;
   }
+
+  const cardImage =
+    (Array.isArray(product.images) && product.images.length > 0
+      ? product.images[0]
+      : product.image) || "";
 
   return (
     <div
-      className="product-card"
-      onClick={() => {
-        navigate(`/product/${product.id}`);
-      }}
-      style={{ cursor: "pointer" }}
+      className="pc"
+      onClick={() => navigate(`/product/${product.id}`)}
     >
-      <div className="product-image">
+      <div className="pc-img-wrap">
+        {product.discount > 0 && (
+          <span className="pc-badge pc-badge-sale">
+            -{product.discount}%
+          </span>
+        )}
 
-  {product.discount > 0 && (
-    <span className="sale-badge">
-      💥 {product.discount}% OFF
-    </span>
-  )}
+        {product.stock <= 0 && (
+          <span className="pc-badge pc-badge-oos">
+            Out of Stock
+          </span>
+        )}
 
-  {product.stock <= 0 && (
-    <span className="stock-badge">
-      Out of Stock
-    </span>
-  )}
+        <img
+          src={cardImage}
+          alt={product.name || "Product"}
+          className="pc-img"
+          loading="lazy"
+        />
+      </div>
 
-  <img
-    src={product.image}
-    alt={product.name}
-  />
+      <div className="pc-body">
+        <h3 className="pc-name">{product.name}</h3>
 
-</div>
+        <div className="pc-price-row">
+          <span className="pc-price">₹{product.price}</span>
+          {product.originalPrice > product.price && (
+            <span className="pc-price-old">₹{product.originalPrice}</span>
+          )}
+        </div>
 
-      <h3>{product.name}</h3>
+        {product.rating != null && product.rating !== undefined && (
+          <div className="pc-rating">
+            <span className="pc-stars">
+              {"★".repeat(Math.round(product.rating))}
+              {"☆".repeat(5 - Math.round(product.rating))}
+            </span>
+            <span className="pc-rating-val">{product.rating}</span>
+          </div>
+        )}
 
-     <div className="price-section">
+        {product.stock > 0 && product.stock <= 5 && (
+          <p className="pc-stock-low">Only {product.stock} left</p>
+        )}
 
-  <span className="new-price">
-    ₹{product.price}
-  </span>
-
-  {product.originalPrice > product.price && (
-    <span className="old-price">
-      ₹{product.originalPrice}
-    </span>
-  )}
-
-</div>
-
-<p
-  className={
-    product.stock <= 0
-      ? "stock-red"
-      : product.stock <= 5
-      ? "stock-orange"
-      : "stock-green"
-  }
->
-  {product.stock <= 0
-    ? "🔴 Out of Stock"
-    : product.stock <= 5
-    ? `🟡 Only ${product.stock} Left!`
-    : "🟢 In Stock"}
-</p>
-
-      <button
-  onClick={(e) => {
-    e.stopPropagation();
-    addToCart(product);
-  }}
-  disabled={product.stock <= 0}
-  style={{
-    opacity: product.stock <= 0 ? 0.5 : 1,
-    cursor: product.stock <= 0 ? "not-allowed" : "pointer",
-  }}
->
-  {product.stock <= 0
-    ? "Out of Stock"
-    : "Add to Cart"}
-</button>
+        <button
+          className="pc-cart-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            addToCart(product);
+          }}
+          disabled={product.stock <= 0}
+        >
+          {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
+        </button>
+      </div>
     </div>
   );
 }
