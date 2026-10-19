@@ -1899,6 +1899,49 @@ textarea.admin-form-input {
   color: var(--admin-text) !important;
 }
 
+/* Dashboard → Recent Orders: compact address + on-demand full address */
+.db-tbl-address {
+  max-width: 220px;
+}
+
+.db-address-summary {
+  display: block;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.db-address-toggle {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--admin-gold);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.db-address-toggle:hover {
+  color: var(--admin-gold-hover);
+  text-decoration: underline;
+}
+
+.db-address-details-row td {
+  padding-top: 4px;
+  padding-bottom: 14px;
+  background: var(--admin-input-bg);
+  white-space: normal;
+}
+
+.db-address-details {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--admin-text-secondary);
+}
+
 .db-status-badge {
   display: inline-block;
   padding: 4px 10px;
@@ -2187,6 +2230,11 @@ textarea.admin-form-input {
   .db-table td:nth-child(3) {
     display: none;
   }
+
+  .db-address-summary,
+  .db-tbl-address {
+    max-width: 160px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -2217,5 +2265,10 @@ textarea.admin-form-input {
   .db-table th:nth-child(3),
   .db-table td:nth-child(3) {
     display: none;
+  }
+
+  .db-address-summary,
+  .db-tbl-address {
+    max-width: 140px;
   }
 }

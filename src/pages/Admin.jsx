@@ -1,5 +1,5 @@
 import ShippingLabel from "../components/ShippingLabel";
-import { useState, useEffect, useMemo } from "react";
+import { Fragment, useState, useEffect, useMemo } from "react";
 import { toast } from "react-toastify";
 import logo from "../images/logo.jpeg";
 import "./Admin.css";
@@ -20,6 +20,84 @@ import {
 } from "firebase/firestore";
 
 const ITEMS_PER_PAGE = 10;
+
+const cleanAddressPart = (value) => {
+  if (typeof value === "string") return value.trim();
+  if (typeof value === "number") return String(value);
+  return "";
+};
+
+const getOrderAddressLines = (order) => {
+  const lines = [
+    [order.house, order.street]
+      .map(cleanAddressPart)
+      .filter(Boolean)
+      .join(", "),
+    [order.city, order.district]
+      .map(cleanAddressPart)
+      .filter(Boolean)
+      .join(", "),
+    [order.stateName, order.pincode]
+      .map(cleanAddressPart)
+      .filter(Boolean)
+      .join(" - "),
+  ].filter(Boolean);
+
+  // `landmark` is optional at checkout: only shown when actually present.
+  const landmark = cleanAddressPart(order.landmark);
+
+  if (landmark) {
+    lines.push(`Landmark: ${landmark}`);
+  }
+
+  return lines;
+};
+
+// Compact, single-line summary for the dashboard table. Deliberately limited
+// to locality level so the full address stays behind the "View Address"
+// action and personal details are not spread across every screen.
+const getOrderAddressSummary = (order) => {
+  const locality = [order.city, order.stateName]
+    .map(cleanAddressPart)
+    .filter(Boolean)
+    .join(", ");
+  const pincode = cleanAddressPart(order.pincode);
+
+  if (locality) {
+    return [locality, pincode].filter(Boolean).join(" - ");
+  }
+
+  return [
+    [order.house, order.street]
+      .map(cleanAddressPart)
+      .filter(Boolean)
+      .join(", "),
+    pincode,
+  ]
+    .filter(Boolean)
+    .join(" - ");
+};
+
+function OrderAddress({ order, className = "admin-order-meta" }) {
+  const lines = getOrderAddressLines(order);
+
+  if (lines.length === 0) {
+    return (
+      <p className={className}>Address not on file</p>
+    );
+  }
+
+  return (
+    <p className={className}>
+      {lines.map((line, index) => (
+        <Fragment key={index}>
+          {index > 0 && <br />}
+          {line}
+        </Fragment>
+      ))}
+    </p>
+  );
+}
 
 function Admin() {
   const [section, setSection] = useState("dashboard");
@@ -67,6 +145,8 @@ function Admin() {
   });
 
   const [orders, setOrders] = useState([]);
+  // Dashboard → Recent Orders: which row has its full address expanded
+  const [addressOrderId, setAddressOrderId] = useState(null);
 
   // Table state
   const [selectedIds, setSelectedIds] = useState([]);
@@ -646,22 +726,67 @@ function Admin() {
                           <th>Date</th>
                           <th>Amount</th>
                           <th>Status</th>
+                          <th>Address</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {orders.slice(0, 8).map((order) => (
-                          <tr key={order.id}>
-                            <td className="db-tbl-mono">{order.orderId}</td>
-                            <td>{order.customerName}</td>
-                            <td className="db-tbl-muted">{order.date}</td>
-                            <td className="db-tbl-amount">&#8377;{(order.total || 0).toLocaleString("en-IN")}</td>
-                            <td>
-                              <span className={`db-status-badge db-status-${(order.status || "pending").toLowerCase()}`}>
-                                {order.status || "Pending"}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
+                        {orders.slice(0, 8).map((order) => {
+                          const addressSummary =
+                            getOrderAddressSummary(order);
+                          const isAddressOpen =
+                            addressOrderId === order.id;
+
+                          return (
+                            <Fragment key={order.id}>
+                              <tr>
+                                <td className="db-tbl-mono">{order.orderId}</td>
+                                <td>{order.customerName}</td>
+                                <td className="db-tbl-muted">{order.date}</td>
+                                <td className="db-tbl-amount">&#8377;{(order.total || 0).toLocaleString("en-IN")}</td>
+                                <td>
+                                  <span className={`db-status-badge db-status-${(order.status || "pending").toLowerCase()}`}>
+                                    {order.status || "Pending"}
+                                  </span>
+                                </td>
+                                <td className="db-tbl-address">
+                                  <span className="db-address-summary">
+                                    {addressSummary || "Address not on file"}
+                                  </span>
+                                  {addressSummary && (
+                                    <button
+                                      type="button"
+                                      className="db-address-toggle"
+                                      aria-expanded={isAddressOpen}
+                                      aria-controls={`db-address-${order.id}`}
+                                      onClick={() =>
+                                        setAddressOrderId(
+                                          isAddressOpen ? null : order.id
+                                        )
+                                      }
+                                    >
+                                      {isAddressOpen
+                                        ? "Hide Address"
+                                        : "View Address"}
+                                    </button>
+                                  )}
+                                </td>
+                              </tr>
+                              {isAddressOpen && (
+                                <tr
+                                  id={`db-address-${order.id}`}
+                                  className="db-address-details-row"
+                                >
+                                  <td colSpan={6}>
+                                    <OrderAddress
+                                      order={order}
+                                      className="db-address-details"
+                                    />
+                                  </td>
+                                </tr>
+                              )}
+                            </Fragment>
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
@@ -1143,13 +1268,7 @@ function Admin() {
 
                         <hr className="admin-order-divider" />
 
-                        <p className="admin-order-meta">
-                          {order.house}, {order.street}
-                          <br />
-                          {order.city}, {order.district}
-                          <br />
-                          {order.stateName} - {order.pincode}
-                        </p>
+                        <OrderAddress order={order} />
 
                         <hr className="admin-order-divider" />
 
@@ -1250,6 +1369,9 @@ function Admin() {
                         <p className="admin-order-meta">
                           {order.customerName} &middot; {order.phone}
                         </p>
+
+                        <OrderAddress order={order} />
+
                         <div className="admin-order-total">
                           &#8377;{order.total}
                         </div>

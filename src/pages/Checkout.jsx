@@ -220,11 +220,6 @@ const applyCoupon = () => {
       data
     );
 
-    console.log(
-      "[Checkout] Razorpay key id:",
-      import.meta.env.VITE_RAZORPAY_KEY_ID
-    );
-
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
 
@@ -290,11 +285,6 @@ const applyCoupon = () => {
 
           const orderToSave =
             toFirestoreSafe(newOrder);
-
-          console.log(
-            "[Checkout] Writing order to Firestore:",
-            orderToSave
-          );
 
           const orderRef = await addDoc(
             collection(db, "orders"),
